@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function Toolbar({ onSelectTool }: { onSelectTool: (tool: string) => void }) {
     const [selected, setSelected] = useState("");
 
-    const tools = ["rect", "circle", "line"];
+    const tools = ["rect", "circle", "line", "arrow", "ellipse"];
 
     return (
         <div className="p-2 flex gap-2 bg-gray-200 border-b">

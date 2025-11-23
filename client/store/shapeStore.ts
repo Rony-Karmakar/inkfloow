@@ -2,12 +2,16 @@ import { create } from "zustand";
 
 export type Shape = {
     id: string;
-    type: "rect" | "circle" | "line";
+    type: "rect" | "circle" | "line" | "arrow" | "ellipse";
     x?: number;
     y?: number;
     width?: number;
     height?: number;
+    pointerLength?: number;
+    pointerWidth?: number;
     radius?: number;
+    radiusX?: number;
+    radiusY?: number;
     points?: number[];
 };
 
