@@ -43,6 +43,12 @@ export default function Canvas({ tool }: { tool: string }) {
         if (tool === "ellipse") {
             setNewShape({ id, type: "ellipse", startX: pos.x, startY: pos.y, radiusX: 0, radiusY: 0 })
         }
+        if (tool === "rhombus") {
+            setNewShape({
+                id, type: "rhombus", startX: pos.x, startY: pos.y, points: []
+            });
+        }
+
     };
 
     const handleMouseMove = (e: any) => {
@@ -92,6 +98,28 @@ export default function Canvas({ tool }: { tool: string }) {
             });
         }
 
+        if (newShape?.type === "rhombus") {
+            const x1 = newShape.startX;
+            const y1 = newShape.startY;
+            const x2 = pos.x;
+            const y2 = pos.y;
+
+            const centerX = (x1 + x2) / 2;
+            const centerY = (y1 + y2) / 2;
+
+            const dx = Math.abs(x2 - x1) / 2;
+            const dy = Math.abs(y2 - y1) / 2;
+
+            setNewShape({
+                ...newShape,
+                points: [
+                    centerX, centerY - dy,
+                    centerX + dx, centerY,
+                    centerX, centerY + dy,
+                    centerX - dx, centerY
+                ]
+            });
+        }
 
     };
 
@@ -111,7 +139,6 @@ export default function Canvas({ tool }: { tool: string }) {
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            className="border bg-white"
         >
             <Layer>
                 {shapes.map((shape) =>
@@ -123,6 +150,15 @@ export default function Canvas({ tool }: { tool: string }) {
                         <Arrow key={shape.id} pointerLength={20} pointerWidth={10} fill="black" points={shape.points!} stroke="black" strokeWidth={2} draggable />
                     ) : shape.type === "ellipse" ? (
                         <Ellipse key={shape.id} x={shape.x} y={shape.y} radiusX={shape.radiusX!} radiusY={shape.radiusY!} stroke="black" draggable />
+                    ) : shape.type === "rhombus" ? (
+                        <Line
+                            key={shape.id}
+                            points={shape.points!}
+                            closed
+                            stroke="black"
+                            strokeWidth={2}
+                            draggable
+                        />
                     ) : (
                         <Line
                             key={shape.id}
@@ -144,6 +180,15 @@ export default function Canvas({ tool }: { tool: string }) {
                         <Arrow {...newShape} stroke="black" strokeWidth={2} />
                     ) : newShape.type === "ellipse" ? (
                         <Ellipse {...newShape} stroke="black" />
+                    ) : newShape.type === "rhombus" ? (
+                        (
+                            <Line
+                                points={newShape.points!}
+                                closed
+                                stroke="black"
+                                strokeWidth={2}
+                            />
+                        )
                     ) : (
                         <Line {...newShape} stroke="black" strokeWidth={2} />
                     ))}
