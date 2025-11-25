@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type Shape = {
     id: string;
-    type: "rect" | "circle" | "line" | "arrow" | "ellipse" | "rhombus" | "text";
+    type: "rect" | "circle" | "line" | "arrow" | "ellipse" | "rhombus" | "text" | "pencil";
     x?: number;
     y?: number;
     width?: number;

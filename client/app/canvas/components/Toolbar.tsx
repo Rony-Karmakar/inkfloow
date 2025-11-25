@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Circle, MoveUpLeft, RectangleHorizontal, Minus, Diamond, TextCursor } from "lucide-react"
+import { Circle, MoveUpLeft, RectangleHorizontal, Minus, Diamond, TextCursor, Pencil } from "lucide-react"
 
 export default function Toolbar({ onSelectTool }: { onSelectTool: (tool: string) => void }) {
     const [selected, setSelected] = useState("");
 
-    const tools = ["rect", "line", "arrow", "ellipse", "rhombus", "text"];
+    const tools = ["rect", "line", "arrow", "ellipse", "rhombus", "text", "pencil"];
 
     return (
         <div className="flex items-center gap-3 bg-neutral-100 rounded-lg p-1.5">
@@ -26,7 +26,8 @@ export default function Toolbar({ onSelectTool }: { onSelectTool: (tool: string)
                                 : tool == "line" ? <Minus className="w-4 h-4" />
                                     : tool == "rhombus" ? <Diamond className="w-4 h-4" />
                                         : tool == "text" ? <TextCursor className="w-4 h-4" />
-                                            : <Circle className="w-4 h-4" />
+                                            : tool == "pencil" ? <Pencil className="w-4 h-4" />
+                                                : <Circle className="w-4 h-4" />
                     }
                 </button>
             ))}

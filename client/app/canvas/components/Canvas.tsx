@@ -57,6 +57,15 @@ export default function Canvas({ tool }: { tool: string }) {
                 text: "Type...",
             });
         }
+        if (tool === "pencil") {
+            setNewShape({
+                id,
+                type: "pencil",
+                points: [pos.x, pos.y],
+                stroke: "black",
+                strokeWidth: 2,
+            });
+        }
 
 
     };
@@ -131,6 +140,14 @@ export default function Canvas({ tool }: { tool: string }) {
             });
         }
 
+        if (newShape?.type === "pencil") {
+            setNewShape({
+                ...newShape,
+                points: [...newShape.points!, pos.x, pos.y],
+            });
+        }
+
+
     };
 
     const handleMouseUp = () => {
@@ -203,6 +220,15 @@ export default function Canvas({ tool }: { tool: string }) {
                                 });
                             }}
                         />
+                    ) : shape.type === "pencil" ? (
+                        <Line
+                            key={shape.id}
+                            points={shape.points!}
+                            stroke="black"
+                            strokeWidth={2}
+                            lineCap="round"
+                            lineJoin="round"
+                        />
                     ) : (
                         <Line
                             key={shape.id}
@@ -224,6 +250,14 @@ export default function Canvas({ tool }: { tool: string }) {
                         <Arrow {...newShape} stroke="black" strokeWidth={2} pointerLength={20} pointerWidth={10} fill="black" />
                     ) : newShape.type === "ellipse" ? (
                         <Ellipse {...newShape} stroke="black" />
+                    ) : newShape.type === "pencil" ? (
+                        <Line
+                            points={newShape.points!}
+                            stroke="black"
+                            strokeWidth={2}
+                            lineCap="round"
+                            lineJoin="round"
+                        />
                     ) : newShape.type === "rhombus" ? (
                         (
                             <Line
