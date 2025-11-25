@@ -1,12 +1,12 @@
 "use client";
 
-import { Stage, Layer, Rect, Circle, Line, Arrow, Ellipse } from "react-konva";
+import { Stage, Layer, Rect, Circle, Line, Arrow, Ellipse, Text } from "react-konva";
 import { useShapes } from "@/store/shapeStore";
 import { v4 as uuid } from "uuid";
 import { useEffect, useRef, useState } from "react";
 
 export default function Canvas({ tool }: { tool: string }) {
-    const { shapes, addShape } = useShapes();
+    const { shapes, addShape, updateShape } = useShapes();
     const stageRef = useRef<any>(null);
     const [size, setSize] = useState({ width: 0, height: 0 });
     const [newShape, setNewShape] = useState<any>(null);
@@ -48,6 +48,16 @@ export default function Canvas({ tool }: { tool: string }) {
                 id, type: "rhombus", startX: pos.x, startY: pos.y, points: []
             });
         }
+        if (tool === "text") {
+            setNewShape({
+                id,
+                type: "text",
+                x: pos.x,
+                y: pos.y,
+                text: "Type...",
+            });
+        }
+
 
     };
 
@@ -143,13 +153,13 @@ export default function Canvas({ tool }: { tool: string }) {
             <Layer>
                 {shapes.map((shape) =>
                     shape.type === "rect" ? (
-                        <Rect key={shape.id} {...shape} stroke="black" draggable />
+                        <Rect key={shape.id} {...shape} stroke="black" cornerRadius={10} draggable />
                     ) : shape.type === "circle" ? (
                         <Circle key={shape.id} {...shape} stroke="black" draggable />
                     ) : shape.type === "arrow" ? (
                         <Arrow key={shape.id} pointerLength={20} pointerWidth={10} fill="black" points={shape.points!} stroke="black" strokeWidth={2} draggable />
                     ) : shape.type === "ellipse" ? (
-                        <Ellipse key={shape.id} x={shape.x} y={shape.y} radiusX={shape.radiusX!} radiusY={shape.radiusY!} stroke="black" draggable />
+                        <Ellipse key={shape.id} x={shape.x} y={shape.y} radiusX={shape.radiusX!} radiusY={shape.radiusY!} cornerRadius={10} stroke="black" draggable />
                     ) : shape.type === "rhombus" ? (
                         <Line
                             key={shape.id}
@@ -158,6 +168,40 @@ export default function Canvas({ tool }: { tool: string }) {
                             stroke="black"
                             strokeWidth={2}
                             draggable
+                            tension={0.2}
+                        />
+                    ) : shape.type === "text" ? (
+                        <Text
+                            key={shape.id}
+                            x={shape.x}
+                            y={shape.y}
+                            text={shape.text}
+                            fontSize={20}
+                            fill="black"
+                            draggable
+
+                            onDblClick={(e) => {
+                                const textPosition = e.target.getAbsolutePosition();
+                                const stageBox = stageRef.current.container().getBoundingClientRect();
+
+                                const textarea = document.createElement("textarea");
+                                document.body.appendChild(textarea);
+
+                                textarea.value = shape.text!;
+                                textarea.style.position = "absolute";
+                                textarea.style.top = stageBox.top + textPosition.y + "px";
+                                textarea.style.left = stageBox.left + textPosition.x + "px";
+                                textarea.style.fontSize = shape.fontSize + "px";
+
+                                textarea.focus();
+
+                                textarea.addEventListener("keydown", (e) => {
+                                    if (e.key === "Enter") {
+                                        updateShape(shape.id, { text: textarea.value });
+                                        document.body.removeChild(textarea);
+                                    }
+                                });
+                            }}
                         />
                     ) : (
                         <Line
@@ -173,11 +217,11 @@ export default function Canvas({ tool }: { tool: string }) {
                 {/* Live preview while drawing */}
                 {newShape &&
                     (newShape.type === "rect" ? (
-                        <Rect {...newShape} stroke="black" />
+                        <Rect {...newShape} stroke="black" cornerRadius={10} />
                     ) : newShape.type === "circle" ? (
                         <Circle {...newShape} stroke="black" />
                     ) : newShape.type === "arrow" ? (
-                        <Arrow {...newShape} stroke="black" strokeWidth={2} />
+                        <Arrow {...newShape} stroke="black" strokeWidth={2} pointerLength={20} pointerWidth={10} fill="black" />
                     ) : newShape.type === "ellipse" ? (
                         <Ellipse {...newShape} stroke="black" />
                     ) : newShape.type === "rhombus" ? (
@@ -187,6 +231,8 @@ export default function Canvas({ tool }: { tool: string }) {
                                 closed
                                 stroke="black"
                                 strokeWidth={2}
+                                cornerRadius={10}
+                                tension={0.2}
                             />
                         )
                     ) : (
